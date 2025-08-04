@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-multitool
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-multitool
+  template:
+    metadata:
+      labels:
+        app: nginx-multitool
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+
+      - name: multitool
+        image: wbitt/network-multitool
+        ports:
+        - containerPort: 8080
+        command: ["sh", "-c", "mkdir -p /etc/nginx/conf.d && echo 'daemon off; master_process off; events {} http { server { listen 8080; return 200 \"Multitool Ready\"; }}' > /etc/nginx/nginx.conf && nginx -c /etc/nginx/nginx.conf"]
